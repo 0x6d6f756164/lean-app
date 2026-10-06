@@ -42,6 +42,6 @@ export const TOOLS: ToolMeta[] = [
     name: "5S Audit",
     tagline: "Score a work area and track how it improves over time.",
     href: "/tools/5s",
-    ready: false,
+    ready: true,
   },
 ];
