@@ -128,9 +128,9 @@ function OeeForm({ initial }: { initial: OeeState }) {
       inputs={inputs}
       results={results}
       share={{
-  tool: "oee",
-  data: { plannedTime, breakdownTime, setupTime, idealCycleTime, totalCount, goodCount },
-}}
+        tool: "oee",
+        data: { plannedTime, breakdownTime, setupTime, idealCycleTime, totalCount, goodCount },
+      }}
       explainer={
         <>
           <p>

@@ -4,8 +4,8 @@ export async function exportNodeAsPng(node: HTMLElement, filename: string): Prom
   const dataUrl = await toPng(node, {
     pixelRatio: 2,
     cacheBust: true,
-    // keeps the export readable in both light and dark mode
-    backgroundColor: getComputedStyle(document.body).backgroundColor,
+    backgroundColor: "#ffffff",
+    skipFonts: true, // the export uses a system font, so there is nothing to embed
   });
 
   const link = document.createElement("a");

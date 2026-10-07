@@ -115,7 +115,10 @@ export default function ToolShell({
 
           {/* The negative margin cancels the padding, so the layout is unchanged
               but the exported image gets some breathing room. */}
-          <div ref={exportRef} className="-m-4 bg-background p-4">
+          <div
+            ref={exportRef}
+            className={`-m-4 p-4 ${exporting ? "export-light" : "bg-background"}`}
+          >
             {exporting && (
               <p className="mb-4 text-sm font-medium text-foreground/70">
                 {title} · Lean Toolkit · {formatDate(new Date())}
