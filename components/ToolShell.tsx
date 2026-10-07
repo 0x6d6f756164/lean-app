@@ -1,8 +1,10 @@
 "use client";
 
 import { useRef, useState, type ReactNode } from "react";
+import { useSharedArea } from "@/hooks/useSharedState";
 import { exportFilename, formatDate } from "@/lib/exportFilename";
 import { exportNodeAsPng } from "@/lib/exportImage";
+import { normalizeArea } from "@/lib/lean/area";
 import { shareHash } from "@/lib/share/codec";
 import type { ToolId } from "@/types/lean";
 
@@ -14,7 +16,7 @@ interface ToolShellProps {
   explainer: ReactNode;
   /** Full-width layout with results above inputs, for wide visuals like diagrams. */
   stacked?: boolean;
-  /** When set, shows a "Copy link" button that encodes this state in the URL. */
+  /** Enables the "Area / line" field and the "Copy link" button for this tool. */
   share?: { tool: ToolId; data: unknown };
 }
 
@@ -37,13 +39,17 @@ export default function ToolShell({
   const [exportError, setExportError] = useState("");
   const [shareMessage, setShareMessage] = useState("");
 
+  const sharedArea = useSharedArea(share?.tool);
+  const [area, setArea] = useState(sharedArea);
+  const cleanArea = normalizeArea(area);
+
   const handleExport = async () => {
     if (!exportRef.current || exporting) return;
     setExportError("");
     setExporting(true);
     try {
-      await nextPaint(); // let the export header render before capturing
-      await exportNodeAsPng(exportRef.current, exportFilename(title, new Date()));
+      await nextPaint(); // let the export header and light theme render before capturing
+      await exportNodeAsPng(exportRef.current, exportFilename(title, new Date(), cleanArea));
     } catch {
       setExportError("Export failed. Please try again.");
     } finally {
@@ -54,7 +60,8 @@ export default function ToolShell({
   const handleShare = async () => {
     if (!share) return;
     try {
-      const url = `${window.location.origin}${window.location.pathname}${shareHash(share.tool, share.data)}`;
+      const hash = shareHash(share.tool, share.data, cleanArea);
+      const url = `${window.location.origin}${window.location.pathname}${hash}`;
       await navigator.clipboard.writeText(url);
       setShareMessage("Link copied");
     } catch (e) {
@@ -77,6 +84,22 @@ export default function ToolShell({
           <h2 className="mb-4 text-sm font-medium uppercase tracking-wide text-foreground/60">
             Inputs
           </h2>
+
+          {share && (
+            <label className="mb-5 block">
+              <span className="mb-1 block text-sm">
+                Area / line <span className="text-foreground/50">(optional)</span>
+              </span>
+              <input
+                value={area}
+                maxLength={60}
+                onChange={(e) => setArea(e.target.value)}
+                placeholder="e.g. Packing line 2"
+                className="w-full rounded-lg border border-foreground/20 bg-transparent px-3 py-2"
+              />
+            </label>
+          )}
+
           {inputs}
         </section>
 
@@ -121,7 +144,9 @@ export default function ToolShell({
           >
             {exporting && (
               <p className="mb-4 text-sm font-medium text-foreground/70">
-                {title} · Lean Toolkit · {formatDate(new Date())}
+                {[title, cleanArea, "Lean Toolkit", formatDate(new Date())]
+                  .filter(Boolean)
+                  .join(" · ")}
               </p>
             )}
             {results}

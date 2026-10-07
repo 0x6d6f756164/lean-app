@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useSyncExternalStore } from "react";
-import { decodeShare, extractShared } from "@/lib/share/codec";
+import { decodeShare, decodeShareArea, extractShared } from "@/lib/share/codec";
 import type { ToolId } from "@/types/lean";
 
 const subscribe = (onChange: () => void) => {
@@ -26,4 +26,14 @@ export function useSharedState<T>(tool: ToolId, parse: (raw: unknown) => T | nul
   }, [hash, tool, parse]);
 
   return { shared, hash };
+}
+
+/** The "Area / line" label stored in the link, or an empty string. */
+export function useSharedArea(tool: ToolId | undefined): string {
+  const hash = useSyncExternalStore(subscribe, getHash, getServerHash);
+
+  return useMemo(() => {
+    const encoded = extractShared(hash);
+    return tool && encoded ? decodeShareArea(encoded, tool) : "";
+  }, [hash, tool]);
 }

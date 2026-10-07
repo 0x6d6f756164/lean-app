@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { MAX_ENCODED_LENGTH, decodeShare, encodeShare, extractShared, shareHash } from "./codec";
+import { decodeShareArea } from "./codec";
 
 describe("encodeShare / decodeShare", () => {
   it("round-trips data, including accents and emoji", () => {
@@ -50,4 +51,26 @@ describe("shareHash / extractShared", () => {
     expect(extractShared("#other=1")).toBeNull();
     expect(extractShared("#s=")).toBeNull();
   });
+describe("area in links", () => {
+  it("round-trips the area", () => {
+    const encoded = encodeShare("oee", { a: 1 }, "  Packing   line 2 ");
+    expect(decodeShareArea(encoded, "oee")).toBe("Packing line 2");
+    expect(decodeShare(encoded, "oee")).toEqual({ a: 1 });
+  });
+
+  it("treats links without an area as having none", () => {
+    expect(decodeShareArea(encodeShare("oee", { a: 1 }), "oee")).toBe("");
+  });
+
+  it("cleans an area that was edited by hand", () => {
+    const edited = btoa(
+      JSON.stringify({ v: 1, tool: "oee", data: { a: 1 }, area: "  Line   9  " }),
+    );
+    expect(decodeShareArea(edited, "oee")).toBe("Line 9");
+  });
+
+  it("ignores the area of a link made for another tool", () => {
+    expect(decodeShareArea(encodeShare("takt", { a: 1 }, "Line 1"), "oee")).toBe("");
+  });
+});
 });

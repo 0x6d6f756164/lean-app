@@ -1,4 +1,5 @@
 import type { ToolId } from "../../types/lean";
+import { normalizeArea } from "../lean/area";
 
 export const SHARE_VERSION = 1;
 export const MAX_ENCODED_LENGTH = 6000;
@@ -19,31 +20,54 @@ function fromBase64Url(encoded: string): string {
   return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
 }
 
-/** Encodes a tool's state for a link. Throws a RangeError when it won't fit. */
-export function encodeShare(tool: ToolId, data: unknown): string {
-  const encoded = toBase64Url(JSON.stringify({ v: SHARE_VERSION, tool, data }));
+/** Encodes a tool's state (and optional area) for a link. Throws a RangeError when it won't fit. */
+export function encodeShare(tool: ToolId, data: unknown, area = ""): string {
+  const envelope: { v: number; tool: ToolId; data: unknown; area?: string } = {
+    v: SHARE_VERSION,
+    tool,
+    data,
+  };
+  const cleanArea = normalizeArea(area);
+  if (cleanArea) envelope.area = cleanArea;
+
+  const encoded = toBase64Url(JSON.stringify(envelope));
   if (encoded.length > MAX_ENCODED_LENGTH) {
     throw new RangeError("Too much data to fit in a link");
   }
   return encoded;
 }
 
-/** Returns the raw data, or null if the payload is invalid or made for another tool. */
-export function decodeShare(encoded: string, tool: ToolId): unknown | null {
+function readEnvelope(encoded: string, tool: ToolId): { data: unknown; area: string } | null {
   if (encoded.length > MAX_ENCODED_LENGTH) return null;
   try {
     const parsed: unknown = JSON.parse(fromBase64Url(encoded));
     if (typeof parsed !== "object" || parsed === null) return null;
-    const envelope = parsed as { v?: unknown; tool?: unknown; data?: unknown };
+
+    const envelope = parsed as { v?: unknown; tool?: unknown; data?: unknown; area?: unknown };
     if (envelope.v !== SHARE_VERSION || envelope.tool !== tool) return null;
-    return envelope.data ?? null;
+    if (envelope.data === undefined || envelope.data === null) return null;
+
+    return {
+      data: envelope.data,
+      area: typeof envelope.area === "string" ? normalizeArea(envelope.area) : "",
+    };
   } catch {
     return null;
   }
 }
 
-export function shareHash(tool: ToolId, data: unknown): string {
-  return `${PREFIX}${encodeShare(tool, data)}`;
+/** Returns the raw data, or null if the payload is invalid or made for another tool. */
+export function decodeShare(encoded: string, tool: ToolId): unknown | null {
+  return readEnvelope(encoded, tool)?.data ?? null;
+}
+
+/** Returns the area label stored in the link, or an empty string. */
+export function decodeShareArea(encoded: string, tool: ToolId): string {
+  return readEnvelope(encoded, tool)?.area ?? "";
+}
+
+export function shareHash(tool: ToolId, data: unknown, area = ""): string {
+  return `${PREFIX}${encodeShare(tool, data, area)}`;
 }
 
 export function extractShared(hash: string): string | null {

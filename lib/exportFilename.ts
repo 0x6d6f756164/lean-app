@@ -14,7 +14,7 @@ export function slugify(text: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-export function exportFilename(title: string, date: Date): string {
-  const slug = slugify(title) || "lean-toolkit";
+export function exportFilename(title: string, date: Date, area = ""): string {
+  const slug = slugify([title, area].filter(Boolean).join(" ")) || "lean-toolkit";
   return `${slug}-${formatDate(date)}.png`;
 }

@@ -23,4 +23,9 @@ describe("exportFilename", () => {
   it("falls back to a default name for an empty title", () => {
     expect(exportFilename("   ", day)).toBe("lean-toolkit-2026-10-06.png");
   });
+  it("includes the area when given", () => {
+  expect(exportFilename("OEE Calculator", day, "Packing line 2")).toBe(
+    "oee-calculator-packing-line-2-2026-10-06.png",
+  );
+  });
 });
