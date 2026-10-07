@@ -136,20 +136,17 @@ export default function ToolShell({
             </div>
           </div>
 
-          {/* The negative margin cancels the padding, so the layout is unchanged
-              but the exported image gets some breathing room. */}
-          <div
-            ref={exportRef}
-            className={`-m-4 p-4 ${exporting ? "export-light" : "bg-background"}`}
-          >
-            {exporting && (
-              <p className="mb-4 text-sm font-medium text-foreground/70">
-                {[title, cleanArea, "Lean Toolkit", formatDate(new Date())]
-                  .filter(Boolean)
-                  .join(" · ")}
-              </p>
-            )}
-            {results}
+          <div className="-m-4">
+            <div ref={exportRef} className={exporting ? "export-light p-8" : "p-4"}>
+              {exporting && (
+                <p className="mb-6 text-sm font-medium text-foreground/70">
+                  {[title, cleanArea, "Lean Toolkit", formatDate(new Date())]
+                    .filter(Boolean)
+                    .join(" · ")}
+                </p>
+              )}
+              {results}
+            </div>
           </div>
 
           {exportError && <p className="mt-3 text-sm text-red-500">{exportError}</p>}
