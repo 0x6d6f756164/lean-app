@@ -5,15 +5,23 @@ import NumberField from "@/components/NumberField";
 import ToolShell from "@/components/ToolShell";
 import { calcOee } from "@/lib/lean/oee";
 
+import { useSharedState } from "@/hooks/useSharedState";
+import { DEFAULT_OEE, parseOeeState, type OeeState } from "@/lib/share/states";
+
 const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
 
 export default function OeeTool() {
-  const [plannedTime, setPlannedTime] = useState(480);
-  const [breakdownTime, setBreakdownTime] = useState(40);
-  const [setupTime, setSetupTime] = useState(20);
-  const [idealCycleTime, setIdealCycleTime] = useState(30);
-  const [totalCount, setTotalCount] = useState(700);
-  const [goodCount, setGoodCount] = useState(665);
+  const { shared, hash } = useSharedState("oee", parseOeeState);
+  return <OeeForm key={shared ? hash : "default"} initial={shared ?? DEFAULT_OEE} />;
+}
+
+function OeeForm({ initial }: { initial: OeeState }) {
+  const [plannedTime, setPlannedTime] = useState(initial.plannedTime);
+  const [breakdownTime, setBreakdownTime] = useState(initial.breakdownTime);
+  const [setupTime, setSetupTime] = useState(initial.setupTime);
+  const [idealCycleTime, setIdealCycleTime] = useState(initial.idealCycleTime);
+  const [totalCount, setTotalCount] = useState(initial.totalCount);
+  const [goodCount, setGoodCount] = useState(initial.goodCount);
 
   const result = useMemo(() => {
     try {
@@ -119,6 +127,10 @@ export default function OeeTool() {
       description="Measure how much of your planned production time is truly productive, and see which losses are costing you the most."
       inputs={inputs}
       results={results}
+      share={{
+  tool: "oee",
+  data: { plannedTime, breakdownTime, setupTime, idealCycleTime, totalCount, goodCount },
+}}
       explainer={
         <>
           <p>

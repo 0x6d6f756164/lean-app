@@ -14,6 +14,9 @@ import {
   type FishboneData,
 } from "@/lib/lean/fishbone";
 
+import { useSharedState } from "@/hooks/useSharedState";
+import { parseFishboneState } from "@/lib/share/states";
+
 const EXAMPLE: FishboneData = {
   problem: "Late deliveries to customers",
   causes: {
@@ -32,7 +35,12 @@ const EMPTY_DRAFTS = Object.fromEntries(CATEGORIES.map((c) => [c.id, ""])) as Re
 >;
 
 export default function FishboneTool() {
-  const [data, setData] = useState<FishboneData>(EXAMPLE);
+  const { shared, hash } = useSharedState("fishbone", parseFishboneState);
+  return <FishboneForm key={shared ? hash : "default"} initial={shared ?? EXAMPLE} />;
+}
+
+function FishboneForm({ initial }: { initial: FishboneData }) {
+  const [data, setData] = useState<FishboneData>(initial);
   const [drafts, setDrafts] = useState<Record<CategoryId, string>>(EMPTY_DRAFTS);
 
   const summary = useMemo(() => summarize(data), [data]);
@@ -180,6 +188,7 @@ export default function FishboneTool() {
       description="Map the possible root causes of a problem across the 6Ms and see where the team's thinking is thin."
       inputs={inputs}
       results={results}
+      share={{ tool: "fishbone", data }}
       explainer={
         <>
           <p>

@@ -5,16 +5,20 @@ import NumberField from "@/components/NumberField";
 import ToolShell from "@/components/ToolShell";
 import { analyzeLine, calcTaktTime, type Station } from "@/lib/lean/takt";
 
+import { useSharedState } from "@/hooks/useSharedState";
+import { DEFAULT_TAKT, parseTaktState, type TaktState } from "@/lib/share/states";
+
 export default function TaktTool() {
-  const [shiftHours, setShiftHours] = useState(8);
-  const [breakMinutes, setBreakMinutes] = useState(60);
-  const [shifts, setShifts] = useState(1);
-  const [demand, setDemand] = useState(420);
-  const [stations, setStations] = useState<Station[]>([
-    { name: "Cut", cycleTime: 55 },
-    { name: "Weld", cycleTime: 62 },
-    { name: "Paint", cycleTime: 48 },
-  ]);
+  const { shared, hash } = useSharedState("takt", parseTaktState);
+  return <TaktForm key={shared ? hash : "default"} initial={shared ?? DEFAULT_TAKT} />;
+}
+
+function TaktForm({ initial }: { initial: TaktState }) {
+  const [shiftHours, setShiftHours] = useState(initial.shiftHours);
+  const [breakMinutes, setBreakMinutes] = useState(initial.breakMinutes);
+  const [shifts, setShifts] = useState(initial.shifts);
+  const [demand, setDemand] = useState(initial.demand);
+  const [stations, setStations] = useState<Station[]>(initial.stations);
 
   const result = useMemo(() => {
     const availableTime = (shiftHours * 60 - breakMinutes) * 60 * shifts; // seconds
@@ -155,6 +159,7 @@ export default function TaktTool() {
       description="Find the pace at which you must produce to meet customer demand, and check which stations can't keep up."
       inputs={inputs}
       results={results}
+      share={{ tool: "takt", data: { shiftHours, breakMinutes, shifts, demand, stations } }}
       explainer={
         <>
           <p>

@@ -3,6 +3,8 @@
 import { useRef, useState, type ReactNode } from "react";
 import { exportFilename, formatDate } from "@/lib/exportFilename";
 import { exportNodeAsPng } from "@/lib/exportImage";
+import { shareHash } from "@/lib/share/codec";
+import type { ToolId } from "@/types/lean";
 
 interface ToolShellProps {
   title: string;
@@ -12,6 +14,8 @@ interface ToolShellProps {
   explainer: ReactNode;
   /** Full-width layout with results above inputs, for wide visuals like diagrams. */
   stacked?: boolean;
+  /** When set, shows a "Copy link" button that encodes this state in the URL. */
+  share?: { tool: ToolId; data: unknown };
 }
 
 const nextPaint = () =>
@@ -26,10 +30,12 @@ export default function ToolShell({
   results,
   explainer,
   stacked = false,
+  share,
 }: ToolShellProps) {
   const exportRef = useRef<HTMLDivElement>(null);
   const [exporting, setExporting] = useState(false);
   const [exportError, setExportError] = useState("");
+  const [shareMessage, setShareMessage] = useState("");
 
   const handleExport = async () => {
     if (!exportRef.current || exporting) return;
@@ -43,6 +49,20 @@ export default function ToolShell({
     } finally {
       setExporting(false);
     }
+  };
+
+  const handleShare = async () => {
+    if (!share) return;
+    try {
+      const url = `${window.location.origin}${window.location.pathname}${shareHash(share.tool, share.data)}`;
+      await navigator.clipboard.writeText(url);
+      setShareMessage("Link copied");
+    } catch (e) {
+      setShareMessage(
+        e instanceof RangeError ? "Too much data to fit in a link" : "Couldn't copy the link",
+      );
+    }
+    window.setTimeout(() => setShareMessage(""), 3000);
   };
 
   return (
@@ -65,18 +85,32 @@ export default function ToolShell({
             stacked ? "order-first" : "lg:sticky lg:top-6"
           }`}
         >
-          <div className="mb-4 flex items-center justify-between gap-3">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-sm font-medium uppercase tracking-wide text-foreground/60">
               Results
             </h2>
-            <button
-              type="button"
-              onClick={handleExport}
-              disabled={exporting}
-              className="rounded-lg border border-foreground/20 px-3 py-1.5 text-sm hover:bg-foreground/5 disabled:opacity-50"
-            >
-              {exporting ? "Exporting…" : "Export PNG"}
-            </button>
+            <div className="flex items-center gap-2">
+              <span role="status" className="text-xs text-foreground/60">
+                {shareMessage}
+              </span>
+              {share && (
+                <button
+                  type="button"
+                  onClick={handleShare}
+                  className="rounded-lg border border-foreground/20 px-3 py-1.5 text-sm hover:bg-foreground/5"
+                >
+                  Copy link
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={handleExport}
+                disabled={exporting}
+                className="rounded-lg border border-foreground/20 px-3 py-1.5 text-sm hover:bg-foreground/5 disabled:opacity-50"
+              >
+                {exporting ? "Exporting…" : "Export PNG"}
+              </button>
+            </div>
           </div>
 
           {/* The negative margin cancels the padding, so the layout is unchanged

@@ -4,6 +4,9 @@ import { useMemo, useState } from "react";
 import ToolShell from "@/components/ToolShell";
 import { MAX_SCORE, PILLARS, scoreAudit, type Rating } from "@/lib/lean/fiveS";
 
+import { useSharedState } from "@/hooks/useSharedState";
+import { DEFAULT_FIVE_S, parseFiveSState, type FiveSState } from "@/lib/share/states";
+
 const SCORES = Array.from({ length: MAX_SCORE + 1 }, (_, i) => i);
 const pct = (n: number) => `${Math.round(n * 100)}%`;
 
@@ -17,8 +20,12 @@ const RATING_COLOR: Record<Rating, string> = {
 import { ratingFor } from "@/lib/lean/fiveS";
 
 export default function FiveSTool() {
-  const [answers, setAnswers] = useState<Record<string, number>>({});
+  const { shared, hash } = useSharedState("5s", parseFiveSState);
+  return <FiveSForm key={shared ? hash : "default"} initial={shared ?? DEFAULT_FIVE_S} />;
+}
 
+function FiveSForm({ initial }: { initial: FiveSState }) {
+  const [answers, setAnswers] = useState<Record<string, number>>(initial.answers);
   const result = useMemo(() => scoreAudit(answers), [answers]);
 
   const setAnswer = (id: string, value: number) =>
@@ -144,6 +151,7 @@ export default function FiveSTool() {
       description="Score a work area against the five S's and see which one to fix first."
       inputs={inputs}
       results={results}
+      share={{ tool: "5s", data: { answers } }}
       explainer={
         <>
           <p>

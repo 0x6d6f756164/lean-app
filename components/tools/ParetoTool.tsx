@@ -6,18 +6,19 @@ import ParetoChart from "@/components/ParetoChart";
 import ToolShell from "@/components/ToolShell";
 import { buildPareto, parseParetoText, type ParetoItem } from "@/lib/lean/pareto";
 
+import { useSharedState } from "@/hooks/useSharedState";
+import { DEFAULT_PARETO, parseParetoState, type ParetoState } from "@/lib/share/states";
+
 const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
 
 export default function ParetoTool() {
-  const [items, setItems] = useState<ParetoItem[]>([
-    { label: "Scratches", count: 45 },
-    { label: "Dents", count: 25 },
-    { label: "Misalignment", count: 12 },
-    { label: "Paint drips", count: 8 },
-    { label: "Cracks", count: 5 },
-    { label: "Other", count: 5 },
-  ]);
-  const [cutoff, setCutoff] = useState(80);
+  const { shared, hash } = useSharedState("pareto", parseParetoState);
+  return <ParetoForm key={shared ? hash : "default"} initial={shared ?? DEFAULT_PARETO} />;
+}
+
+function ParetoForm({ initial }: { initial: ParetoState }) {
+  const [items, setItems] = useState<ParetoItem[]>(initial.items);
+  const [cutoff, setCutoff] = useState(initial.cutoff);
   const [pasteText, setPasteText] = useState("");
   const [pasteMessage, setPasteMessage] = useState("");
 
@@ -177,6 +178,7 @@ export default function ParetoTool() {
       description="Rank defect causes by frequency and find the vital few that drive most of your problems."
       inputs={inputs}
       results={results}
+      share={{ tool: "pareto", data: { items, cutoff } }}
       explainer={
         <>
           <p>
