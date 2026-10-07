@@ -35,7 +35,7 @@ export const TOOLS: ToolMeta[] = [
     name: "Fishbone Diagram",
     tagline: "Map the root causes of a problem across the 6Ms.",
     href: "/tools/fishbone",
-    ready: false,
+    ready: true,
   },
   {
     id: "5s",

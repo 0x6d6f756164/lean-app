@@ -17,7 +17,6 @@ const RATING_COLOR: Record<Rating, string> = {
 import { ratingFor } from "@/lib/lean/fiveS";
 
 export default function FiveSTool() {
-  const [area, setArea] = useState("Assembly line 1");
   const [answers, setAnswers] = useState<Record<string, number>>({});
 
   const result = useMemo(() => scoreAudit(answers), [answers]);
@@ -26,31 +25,35 @@ export default function FiveSTool() {
     setAnswers((prev) => ({ ...prev, [id]: value }));
 
   const inputs = (
-    <div className="space-y-6">
-      <label className="block">
-        <span className="mb-1 block text-sm">Area being audited</span>
-        <input
-          value={area}
-          onChange={(e) => setArea(e.target.value)}
-          className="w-full rounded-lg border border-foreground/20 bg-transparent px-3 py-2"
-        />
-      </label>
+  <div className="space-y-6">
 
-      <p className="text-xs text-foreground/60">
-        Rate each statement from 0 (not done at all) to {MAX_SCORE} (fully in place and sustained).
-        Unrated questions are left out of the score.
-      </p>
+    <p className="text-sm text-foreground/70">
+      Rate each statement from <strong>0</strong> (not done at all) to{" "}
+      <strong>{MAX_SCORE}</strong> (fully in place and sustained). Unrated questions are left
+      out of the score.
+    </p>
 
-      {PILLARS.map((pillar, pi) => (
-        <fieldset key={pillar.id} className="space-y-4">
-          <legend className="mb-1 font-medium">
-            {pi + 1}. {pillar.name}{" "}
-            <span className="text-sm font-normal text-foreground/60">({pillar.japanese})</span>
-          </legend>
+    {PILLARS.map((pillar, pi) => (
+      <fieldset
+        key={pillar.id}
+        className="rounded-xl border border-foreground/15 bg-foreground/[0.03] p-4"
+      >
+        <legend className="sr-only">{pillar.name}</legend>
 
+        <div className="mb-4 flex items-center gap-3 border-b border-foreground/10 pb-3">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sky-500 text-sm font-semibold text-white">
+            {pi + 1}
+          </span>
+          <div>
+            <h3 className="font-semibold leading-tight">{pillar.name}</h3>
+            <p className="text-xs text-foreground/60">{pillar.japanese}</p>
+          </div>
+        </div>
+
+        <div className="space-y-5">
           {pillar.questions.map((q) => (
             <div key={q.id}>
-              <p className="text-sm">{q.text}</p>
+              <p className="text-sm text-foreground">{q.text}</p>
               <div role="radiogroup" aria-label={q.text} className="mt-2 flex gap-1.5">
                 {SCORES.map((v) => (
                   <label key={v} className="cursor-pointer">
@@ -70,18 +73,19 @@ export default function FiveSTool() {
               </div>
             </div>
           ))}
-        </fieldset>
-      ))}
+        </div>
+      </fieldset>
+    ))}
 
-      <button
-        type="button"
-        onClick={() => setAnswers({})}
-        className="rounded-lg border border-foreground/20 px-3 py-1.5 text-sm hover:bg-foreground/5"
-      >
-        Reset answers
-      </button>
-    </div>
-  );
+    <button
+      type="button"
+      onClick={() => setAnswers({})}
+      className="rounded-lg border border-foreground/20 px-3 py-1.5 text-sm hover:bg-foreground/5"
+    >
+      Reset answers
+    </button>
+  </div>
+);
 
   let results;
   if (result.percent === null || result.rating === null) {
@@ -94,7 +98,6 @@ export default function FiveSTool() {
     results = (
       <div className="space-y-6">
         <div>
-          <div className="text-sm text-foreground/60">{area || "Unnamed area"}</div>
           <div className="text-5xl font-semibold tabular-nums">{pct(result.percent)}</div>
           <div className="text-sm text-foreground/60">
             {result.rating} · {result.answered} of {result.total} questions rated
