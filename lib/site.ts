@@ -20,8 +20,10 @@ export const SITE = {
   author: { name: "Mouad", url: "https://mouad-eg.vercel.app" },
 
   /** Header links that are not tools. */
-  extraNav: [{ label: "Workspace", href: "/workspace" }],
-
+  extraNav: [
+    { label: "Workspace", href: "/workspace" },
+    { label: "Dashboard", href: "/dashboard" },
+  ],
   /** Colors of the social preview image. */
   og: {
     background: "#0b0e13",

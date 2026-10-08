@@ -8,6 +8,8 @@ import {
   serializeRecords,
 } from "./records";
 
+import { createDemoRecords, withoutDemo } from "../dashboard/demo";
+
 const EMPTY: LeanRecord[] = [];
 let cachedRaw: string | null | undefined;
 let cachedRecords: LeanRecord[] = EMPTY;
@@ -65,3 +67,7 @@ export function importRecords(incoming: LeanRecord[]): number {
   const merged = mergeRecords(before, incoming);
   return write(merged) ? merged.length - before.length : 0;
 }
+
+export const loadDemoRecords = (): number => importRecords(createDemoRecords());
+
+export const removeDemoRecords = (): boolean => write(withoutDemo(getRecords()));
