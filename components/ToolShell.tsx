@@ -19,6 +19,8 @@ import { saveRecord } from "@/lib/workspace/store";
 
 import { SITE } from "@/lib/site";
 
+import { ExportingProvider } from "@/components/ExportContext";
+
 interface ToolShellProps {
   title: string;
   description: string;
@@ -97,7 +99,7 @@ export default function ToolShell({
   };
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-10">
+    <main className="mx-auto max-w-6xl px-4 py-10 animate-fade-up">
       <header className="mb-8">
         <h1 className="text-3xl font-semibold tracking-tight">{title}</h1>
         <p className="mt-2 max-w-2xl text-foreground/70">{description}</p>
@@ -205,7 +207,7 @@ export default function ToolShell({
                     .join(" · ")}
                 </p>
               )}
-              {results}
+              <ExportingProvider value={exporting}>{results}</ExportingProvider>
             </div>
           </div>
 

@@ -8,6 +8,8 @@ import { analyzeLine, calcTaktTime, availableSeconds, type Station } from "@/lib
 import { useSharedState } from "@/hooks/useSharedState";
 import { DEFAULT_TAKT, parseTaktState, type TaktState } from "@/lib/share/states";
 
+import AnimatedNumber from "@/components/fx/AnimatedNumber";
+
 export default function TaktTool() {
   const { shared, hash } = useSharedState("takt", parseTaktState);
   return <TaktForm key={shared ? hash : "default"} initial={shared ?? DEFAULT_TAKT} />;
@@ -98,8 +100,10 @@ function TaktForm({ initial }: { initial: TaktState }) {
     results = (
       <div className="space-y-6">
         <div>
-          <div className="text-5xl font-semibold tabular-nums">{takt.toFixed(1)} s</div>
-          <div className="text-sm text-foreground/60">takt time per unit</div>
+        <div className="text-5xl font-semibold tabular-nums">
+          <AnimatedNumber value={takt} format={(n) => `${n.toFixed(1)} s`} />
+        </div>
+        <div className="text-sm text-foreground/60">takt time per unit</div>
         </div>
 
         <dl className="grid grid-cols-3 gap-4 text-sm">
@@ -134,7 +138,7 @@ function TaktForm({ initial }: { initial: TaktState }) {
               </div>
               <div className="relative h-3 rounded-full bg-foreground/10">
                 <div
-                  className={`h-3 rounded-full ${s.overTakt ? "bg-red-500" : "bg-emerald-500"}`}
+                  className={`h-3 rounded-full ${s.overTakt ? "bg-red-500" : "bg-emerald-500"} transition-[width] duration-500 ease-out`}
                   style={{ width: `${(s.cycleTime / scale) * 100}%` }}
                 />
                 <div

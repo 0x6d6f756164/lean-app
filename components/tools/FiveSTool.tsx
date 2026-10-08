@@ -7,6 +7,8 @@ import { MAX_SCORE, PILLARS, scoreAudit, type Rating } from "@/lib/lean/fiveS";
 import { useSharedState } from "@/hooks/useSharedState";
 import { DEFAULT_FIVE_S, parseFiveSState, type FiveSState } from "@/lib/share/states";
 
+import AnimatedNumber from "@/components/fx/AnimatedNumber";
+
 const SCORES = Array.from({ length: MAX_SCORE + 1 }, (_, i) => i);
 const pct = (n: number) => `${Math.round(n * 100)}%`;
 
@@ -105,7 +107,7 @@ function FiveSForm({ initial }: { initial: FiveSState }) {
     results = (
       <div className="space-y-6">
         <div>
-          <div className="text-5xl font-semibold tabular-nums">{pct(result.percent)}</div>
+          <div className="text-5xl font-semibold tabular-nums"><AnimatedNumber value={result.percent} format={pct} /></div>
           <div className="text-sm text-foreground/60">
             {result.rating} · {result.answered} of {result.total} questions rated
             {!result.complete && " (score covers rated questions only)"}

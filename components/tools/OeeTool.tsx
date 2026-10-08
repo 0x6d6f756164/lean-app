@@ -8,6 +8,8 @@ import { calcOee } from "@/lib/lean/oee";
 import { useSharedState } from "@/hooks/useSharedState";
 import { DEFAULT_OEE, parseOeeState, type OeeState } from "@/lib/share/states";
 
+import AnimatedNumber from "@/components/fx/AnimatedNumber";
+
 const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
 
 export default function OeeTool() {
@@ -66,7 +68,7 @@ function OeeForm({ initial }: { initial: OeeState }) {
     results = (
       <div className="space-y-6">
         <div>
-          <div className="text-5xl font-semibold tabular-nums">{pct(r.oee)}</div>
+          <div className="text-5xl font-semibold tabular-nums"><AnimatedNumber value={r.oee} format={pct} /></div>
           <div className="text-sm text-foreground/60">
             OEE · 85% is often cited as world class
           </div>

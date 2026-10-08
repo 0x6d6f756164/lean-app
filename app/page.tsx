@@ -1,43 +1,56 @@
-import Link from "next/link";
-import { TOOLS } from "@/lib/tools";
+import HeroTitle from "@/components/fx/HeroTitle";
+import Reveal from "@/components/fx/Reveal";
+import SpotlightLink from "@/components/fx/SpotlightLink";
 import { SITE } from "@/lib/site";
+import { TOOLS } from "@/lib/tools";
 
 export default function Home() {
-  return (
-    <main className="mx-auto max-w-6xl px-4 py-16">
-      <section className="max-w-2xl">
-        <h1 className="text-4xl font-semibold tracking-tight">Lean Toolkit</h1>
-        <p className="mt-4 text-lg text-foreground/70">
-          Calculators and charts for Lean and {SITE.eyebrow}. Enter your numbers,
-          see the result instantly, and learn what it means.
-        </p>
-      </section>
+  const tools = TOOLS.filter((t) => t.ready);
 
-      <section className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {TOOLS.map((t) =>
-          t.ready ? (
-            <Link
-              key={t.id}
-              href={t.href}
-              className="rounded-xl border border-foreground/15 p-5 transition hover:border-foreground/40 hover:bg-foreground/5"
-            >
-              <h2 className="font-medium">{t.name}</h2>
-              <p className="mt-2 text-sm text-foreground/70">{t.tagline}</p>
-            </Link>
-          ) : (
-            <div
-              key={t.id}
-              className="rounded-xl border border-dashed border-foreground/15 p-5 opacity-60"
-            >
-              <div className="flex items-center justify-between">
-                <h2 className="font-medium">{t.name}</h2>
-                <span className="rounded-full bg-foreground/10 px-2 py-0.5 text-xs">Soon</span>
-              </div>
-              <p className="mt-2 text-sm text-foreground/70">{t.tagline}</p>
-            </div>
-          ),
-        )}
-      </section>
-    </main>
+  return (
+    <div className="relative isolate">
+      <div
+        aria-hidden="true"
+        className="hero-grid pointer-events-none absolute inset-x-0 top-0 -z-10 h-[480px]"
+      />
+
+      <main className="mx-auto max-w-6xl px-4 py-16 sm:py-24">
+        <section className="max-w-3xl">
+          <p className="text-sm font-medium uppercase tracking-widest text-accent">
+            {SITE.eyebrow}
+          </p>
+          <div className="mt-3">
+            <HeroTitle text={SITE.tagline} />
+          </div>
+          <p className="mt-5 max-w-2xl text-lg text-foreground/70">{SITE.intro}</p>
+        </section>
+
+        <section aria-label="Tools" className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {tools.map((t, i) => (
+            <Reveal key={t.id} delay={i * 80} className="h-full">
+              <SpotlightLink
+                href={t.href}
+                className="block h-full rounded-2xl border border-foreground/10 bg-surface p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-md"
+              >
+                <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent/10 text-sm font-semibold text-accent">
+                  {i + 1}
+                </span>
+                <h2 className="mt-4 font-semibold">{t.name}</h2>
+                <p className="mt-2 text-sm text-foreground/70">{t.tagline}</p>
+                <span className="mt-4 inline-block text-sm font-medium text-accent">
+                  Open tool{" "}
+                  <span
+                    aria-hidden="true"
+                    className="inline-block transition-transform group-hover:translate-x-0.5"
+                  >
+                    →
+                  </span>
+                </span>
+              </SpotlightLink>
+            </Reveal>
+          ))}
+        </section>
+      </main>
+    </div>
   );
 }
