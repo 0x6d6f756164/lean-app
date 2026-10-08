@@ -40,3 +40,11 @@ export function analyzeLine(taktTime: number, stations: Station[]): LineAnalysis
 
   return { totalCycleTime, minOperators, bottleneck, stations: analyzed };
 }
+
+export function availableSeconds(
+  shiftHours: number,
+  breakMinutes: number,
+  shifts: number,
+): number {
+  return (shiftHours * 60 - breakMinutes) * 60 * shifts;
+}

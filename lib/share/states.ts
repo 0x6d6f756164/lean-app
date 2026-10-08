@@ -36,7 +36,7 @@ export const DEFAULT_TAKT: TaktState = {
   shiftHours: 8,
   breakMinutes: 60,
   shifts: 1,
-  demand: 420,
+  demand: 450,
   stations: [
     { name: "Cut", cycleTime: 55 },
     { name: "Weld", cycleTime: 62 },

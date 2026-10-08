@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { analyzeLine, calcTaktTime } from "./takt";
+import { analyzeLine, calcTaktTime, availableSeconds } from "./takt";
+
 
 describe("calcTaktTime", () => {
   it("divides available time by demand", () => {
@@ -26,5 +27,12 @@ describe("analyzeLine", () => {
 
   it("computes the minimum number of operators", () => {
     expect(analyzeLine(60, stations).minOperators).toBe(3); // 165 / 60 = 2.75
+  });
+});
+
+describe("availableSeconds", () => {
+  it("subtracts breaks and multiplies by shifts", () => {
+    expect(availableSeconds(8, 60, 1)).toBe(27000);
+    expect(availableSeconds(8, 60, 2)).toBe(54000);
   });
 });

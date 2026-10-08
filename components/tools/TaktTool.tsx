@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import NumberField from "@/components/NumberField";
 import ToolShell from "@/components/ToolShell";
-import { analyzeLine, calcTaktTime, type Station } from "@/lib/lean/takt";
+import { analyzeLine, calcTaktTime, availableSeconds, type Station } from "@/lib/lean/takt";
 
 import { useSharedState } from "@/hooks/useSharedState";
 import { DEFAULT_TAKT, parseTaktState, type TaktState } from "@/lib/share/states";
@@ -21,7 +21,7 @@ function TaktForm({ initial }: { initial: TaktState }) {
   const [stations, setStations] = useState<Station[]>(initial.stations);
 
   const result = useMemo(() => {
-    const availableTime = (shiftHours * 60 - breakMinutes) * 60 * shifts; // seconds
+    const availableTime = availableSeconds(shiftHours, breakMinutes, shifts);
     try {
       const takt = calcTaktTime(availableTime, demand);
       return { ok: true as const, availableTime, takt, line: analyzeLine(takt, stations) };

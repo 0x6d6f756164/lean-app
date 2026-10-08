@@ -14,6 +14,9 @@ import { normalizeArea } from "@/lib/lean/area";
 import { shareHash } from "@/lib/share/codec";
 import type { ToolId } from "@/types/lean";
 
+import { createRecord } from "@/lib/workspace/records";
+import { saveRecord } from "@/lib/workspace/store";
+
 interface ToolShellProps {
   title: string;
   description: string;
@@ -68,19 +71,27 @@ export default function ToolShell({
     }
   };
 
+  const flash = (message: string) => {
+    setShareMessage(message);
+    window.setTimeout(() => setShareMessage(""), 3000);
+  };
+
   const handleShare = async () => {
     if (!share) return;
     try {
       const hash = shareHash(share.tool, share.data, cleanArea);
       const url = `${window.location.origin}${window.location.pathname}${hash}`;
       await navigator.clipboard.writeText(url);
-      setShareMessage("Link copied");
+      flash("Link copied");
     } catch (e) {
-      setShareMessage(
-        e instanceof RangeError ? "Too much data to fit in a link" : "Couldn't copy the link",
-      );
+      flash(e instanceof RangeError ? "Too much data to fit in a link" : "Couldn't copy the link");
     }
-    window.setTimeout(() => setShareMessage(""), 3000);
+  };
+
+  const handleSave = () => {
+    if (!share) return;
+    const saved = saveRecord(createRecord(share.tool, share.data, cleanArea));
+    flash(saved ? "Saved to your workspace" : "Couldn't save: browser storage is unavailable");
   };
 
   return (
@@ -127,6 +138,15 @@ export default function ToolShell({
               <span role="status" className="text-xs text-foreground/60">
                 {shareMessage}
               </span>
+              {share && (
+                <button
+                  type="button"
+                  onClick={handleSave}
+                  className="rounded-lg border border-foreground/20 px-3 py-1.5 text-sm hover:bg-foreground/5"
+                >
+                  Save
+                </button>
+              )}
               {share && (
                 <button
                   type="button"

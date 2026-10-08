@@ -29,6 +29,17 @@ export default function SiteHeader() {
                 >
                   {t.name}
                 </Link>
+                <Link
+                  href="/workspace"
+                  aria-current={pathname === "/workspace" ? "page" : undefined}
+                  className={`whitespace-nowrap rounded-lg px-3 py-1.5 text-sm transition-colors ${
+                    pathname === "/workspace"
+                      ? "bg-foreground/10 font-medium text-foreground"
+                      : "text-foreground/60 hover:bg-foreground/5 hover:text-foreground"
+                  }`}
+                >
+                  Workspace
+                </Link>
               </li>
             );
           })}
