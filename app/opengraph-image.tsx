@@ -1,12 +1,15 @@
 import { ImageResponse } from "next/og";
+import { SITE } from "@/lib/site";
+import { TOOLS } from "@/lib/tools";
 
+// Next treats these three exports specially, so they stay plain literals.
 export const alt = "Lean Toolkit: calculators and charts for Lean and industrial engineering";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-const TOOL_NAMES = ["Takt Time", "OEE", "Pareto Chart", "5S Audit", "Fishbone Diagram"];
-
 export default function OpenGraphImage() {
+  const { og } = SITE;
+
   return new ImageResponse(
     (
       <div
@@ -17,8 +20,8 @@ export default function OpenGraphImage() {
           flexDirection: "column",
           justifyContent: "space-between",
           padding: 72,
-          background: "#0b0e13",
-          color: "#e8ecf1",
+          background: og.background,
+          color: og.foreground,
         }}
       >
         <div style={{ display: "flex", alignItems: "center" }}>
@@ -30,42 +33,38 @@ export default function OpenGraphImage() {
               width: 56,
               height: 56,
               borderRadius: 14,
-              background: "#38bdf8",
-              color: "#04121c",
+              background: og.accent,
+              color: og.onAccent,
               fontSize: 34,
               fontWeight: 700,
             }}
           >
-            L
+            {SITE.logoLetter}
           </div>
-          <div style={{ marginLeft: 20, fontSize: 34, fontWeight: 600 }}>Lean Toolkit</div>
+          <div style={{ marginLeft: 20, fontSize: 34, fontWeight: 600 }}>{SITE.name}</div>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ fontSize: 76, fontWeight: 700, lineHeight: 1.1 }}>
-            Lean tools that show their work
-          </div>
-          <div style={{ marginTop: 28, fontSize: 32, color: "#9aa7b8" }}>
-            Calculators and charts for industrial engineering, in your browser.
-          </div>
+          <div style={{ fontSize: 76, fontWeight: 700, lineHeight: 1.1 }}>{SITE.tagline}</div>
+          <div style={{ marginTop: 28, fontSize: 32, color: og.muted }}>{SITE.description}</div>
         </div>
 
         <div style={{ display: "flex", flexWrap: "wrap" }}>
-          {TOOL_NAMES.map((name) => (
+          {TOOLS.filter((t) => t.ready).map((t) => (
             <div
-              key={name}
+              key={t.id}
               style={{
                 display: "flex",
                 marginRight: 14,
                 marginBottom: 12,
                 padding: "10px 22px",
                 borderRadius: 999,
-                border: "2px solid #2b3442",
+                border: `2px solid ${og.border}`,
                 fontSize: 26,
                 color: "#cbd5e1",
               }}
             >
-              {name}
+              {t.name}
             </div>
           ))}
         </div>

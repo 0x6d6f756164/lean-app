@@ -2,43 +2,42 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { TOOLS } from "@/lib/tools";
+import { buildNavItems } from "@/lib/nav";
+import { SITE } from "@/lib/site";
+
+const NAV_ITEMS = buildNavItems();
 
 export default function SiteHeader() {
   const pathname = usePathname();
 
   return (
-    <header className="border-b border-foreground/10">
-      <nav className="mx-auto flex max-w-6xl items-center gap-6 px-4 py-4">
-        <Link href="/" className="font-semibold tracking-tight">
-          Lean Toolkit
+    <header className="sticky top-0 z-20 border-b border-foreground/10 bg-background/80 backdrop-blur">
+      <nav aria-label="Main" className="mx-auto flex max-w-6xl items-center gap-6 px-4 py-3">
+        <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
+          <span
+            aria-hidden="true"
+            className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent text-sm font-bold text-on-accent"
+          >
+            {SITE.logoLetter}
+          </span>
+          {SITE.name}
         </Link>
-        <ul className="flex flex-1 gap-4 overflow-x-auto text-sm">
-          {TOOLS.filter((t) => t.ready).map((t) => {
-            const active = pathname === t.href;
+
+        <ul className="flex flex-1 gap-1 overflow-x-auto text-sm">
+          {NAV_ITEMS.map((item) => {
+            const active = pathname === item.href;
             return (
-              <li key={t.id}>
+              <li key={item.href}>
                 <Link
-                  href={t.href}
+                  href={item.href}
                   aria-current={active ? "page" : undefined}
-                  className={
+                  className={`block whitespace-nowrap rounded-lg px-3 py-1.5 transition-colors ${
                     active
-                      ? "font-medium text-foreground"
-                      : "text-foreground/60 hover:text-foreground"
-                  }
-                >
-                  {t.name}
-                </Link>
-                <Link
-                  href="/workspace"
-                  aria-current={pathname === "/workspace" ? "page" : undefined}
-                  className={`whitespace-nowrap rounded-lg px-3 py-1.5 text-sm transition-colors ${
-                    pathname === "/workspace"
                       ? "bg-foreground/10 font-medium text-foreground"
                       : "text-foreground/60 hover:bg-foreground/5 hover:text-foreground"
                   }`}
                 >
-                  Workspace
+                  {item.label}
                 </Link>
               </li>
             );

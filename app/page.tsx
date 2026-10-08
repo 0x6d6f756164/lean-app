@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { TOOLS } from "@/lib/tools";
+import { SITE } from "@/lib/site";
 
 export default function Home() {
   return (
@@ -7,7 +8,7 @@ export default function Home() {
       <section className="max-w-2xl">
         <h1 className="text-4xl font-semibold tracking-tight">Lean Toolkit</h1>
         <p className="mt-4 text-lg text-foreground/70">
-          Calculators and charts for Lean and industrial engineering. Enter your numbers,
+          Calculators and charts for Lean and {SITE.eyebrow}. Enter your numbers,
           see the result instantly, and learn what it means.
         </p>
       </section>

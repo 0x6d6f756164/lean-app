@@ -17,6 +17,8 @@ import type { ToolId } from "@/types/lean";
 import { createRecord } from "@/lib/workspace/records";
 import { saveRecord } from "@/lib/workspace/store";
 
+import { SITE } from "@/lib/site";
+
 interface ToolShellProps {
   title: string;
   description: string;
@@ -198,7 +200,7 @@ export default function ToolShell({
             >
               {exporting && (
                 <p className="mb-6 text-sm font-medium text-foreground/70">
-                  {[title, cleanArea, "Lean Toolkit", formatDate(new Date())]
+                  {[title, cleanArea, SITE.name, formatDate(new Date())]
                     .filter(Boolean)
                     .join(" · ")}
                 </p>

@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
 import SiteHeader from "@/components/SiteHeader";
+import { SITE } from "@/lib/site";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://your-lean-toolkit.vercel.app"),
-  title: { default: "Lean Toolkit", template: "%s · Lean Toolkit" },
-  description: "Free calculators and charts for Lean and industrial engineering.",
+  metadataBase: new URL(SITE.url),
+  title: { default: SITE.name, template: `%s · ${SITE.name}` },
+  description: SITE.description,
+  authors: [{ name: SITE.author.name, url: SITE.author.url }],
   openGraph: {
-    title: "Lean Toolkit",
-    description: "Calculators and charts for Lean and industrial engineering.",
+    title: SITE.name,
+    description: SITE.description,
+    siteName: SITE.name,
     type: "website",
   },
   twitter: { card: "summary_large_image" },
@@ -16,7 +19,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang={SITE.locale}>
       <body>
         <SiteHeader />
         {children}
