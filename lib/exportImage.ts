@@ -1,10 +1,14 @@
 import { toPng } from "html-to-image";
 
-export async function exportNodeAsPng(node: HTMLElement, filename: string): Promise<void> {
+export async function exportNodeAsPng(
+  node: HTMLElement,
+  filename: string,
+  backgroundColor = "#ffffff",
+): Promise<void> {
   const dataUrl = await toPng(node, {
     pixelRatio: 2,
     cacheBust: true,
-    backgroundColor: "#ffffff",
+    backgroundColor,
     skipFonts: true, // the export uses a system font, so there is nothing to embed
   });
 

@@ -4,6 +4,12 @@ import { useRef, useState, type ReactNode } from "react";
 import { useSharedArea } from "@/hooks/useSharedState";
 import { exportFilename, formatDate } from "@/lib/exportFilename";
 import { exportNodeAsPng } from "@/lib/exportImage";
+import {
+  EXPORT_BACKGROUND,
+  EXPORT_THEMES,
+  exportThemeClass,
+  type ExportTheme,
+} from "@/lib/exportTheme";
 import { normalizeArea } from "@/lib/lean/area";
 import { shareHash } from "@/lib/share/codec";
 import type { ToolId } from "@/types/lean";
@@ -37,6 +43,7 @@ export default function ToolShell({
   const exportRef = useRef<HTMLDivElement>(null);
   const [exporting, setExporting] = useState(false);
   const [exportError, setExportError] = useState("");
+  const [exportTheme, setExportTheme] = useState<ExportTheme>("light");
   const [shareMessage, setShareMessage] = useState("");
 
   const sharedArea = useSharedArea(share?.tool);
@@ -48,8 +55,12 @@ export default function ToolShell({
     setExportError("");
     setExporting(true);
     try {
-      await nextPaint(); // let the export header and light theme render before capturing
-      await exportNodeAsPng(exportRef.current, exportFilename(title, new Date(), cleanArea));
+      await nextPaint(); // let the export header and theme render before capturing
+      await exportNodeAsPng(
+        exportRef.current,
+        exportFilename(title, new Date(), cleanArea),
+        EXPORT_BACKGROUND[exportTheme],
+      );
     } catch {
       setExportError("Export failed. Please try again.");
     } finally {
@@ -80,7 +91,7 @@ export default function ToolShell({
       </header>
 
       <div className={stacked ? "grid gap-6" : "grid items-start gap-6 lg:grid-cols-2"}>
-        <section className="rounded-xl border border-foreground/15 p-5">
+        <section className="rounded-2xl border border-foreground/10 bg-surface p-6 shadow-sm">
           <h2 className="mb-4 text-sm font-medium uppercase tracking-wide text-foreground/60">
             Inputs
           </h2>
@@ -104,7 +115,7 @@ export default function ToolShell({
         </section>
 
         <section
-          className={`rounded-xl border border-foreground/15 p-5 ${
+          className={`rounded-2xl border border-foreground/10 bg-surface p-6 shadow-sm ${
             stacked ? "order-first" : "lg:sticky lg:top-6"
           }`}
         >
@@ -112,7 +123,7 @@ export default function ToolShell({
             <h2 className="text-sm font-medium uppercase tracking-wide text-foreground/60">
               Results
             </h2>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <span role="status" className="text-xs text-foreground/60">
                 {shareMessage}
               </span>
@@ -125,6 +136,28 @@ export default function ToolShell({
                   Copy link
                 </button>
               )}
+              <div
+                role="group"
+                aria-label="Export theme"
+                title="Theme of the exported image"
+                className="flex rounded-lg border border-foreground/20 p-0.5 text-xs"
+              >
+                {EXPORT_THEMES.map((theme) => (
+                  <button
+                    key={theme}
+                    type="button"
+                    aria-pressed={exportTheme === theme}
+                    onClick={() => setExportTheme(theme)}
+                    className={`rounded-md px-2 py-1 capitalize ${
+                      exportTheme === theme
+                        ? "bg-foreground/10 font-medium"
+                        : "text-foreground/60 hover:text-foreground"
+                    }`}
+                  >
+                    {theme}
+                  </button>
+                ))}
+              </div>
               <button
                 type="button"
                 onClick={handleExport}
@@ -136,8 +169,13 @@ export default function ToolShell({
             </div>
           </div>
 
+          {/* The outer wrapper cancels the section padding. It isn't captured, so its
+              negative margin can't shift the exported image. */}
           <div className="-m-4">
-            <div ref={exportRef} className={exporting ? "export-light p-8" : "p-4"}>
+            <div
+              ref={exportRef}
+              className={exporting ? `${exportThemeClass(exportTheme)} p-8` : "p-4"}
+            >
               {exporting && (
                 <p className="mb-6 text-sm font-medium text-foreground/70">
                   {[title, cleanArea, "Lean Toolkit", formatDate(new Date())]
@@ -153,7 +191,7 @@ export default function ToolShell({
         </section>
       </div>
 
-      <section className="mt-6 rounded-xl bg-foreground/5 p-5">
+      <section className="mt-6 rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-6">
         <h2 className="mb-2 font-medium">About this tool</h2>
         <div className="space-y-2 text-sm text-foreground/80">{explainer}</div>
       </section>

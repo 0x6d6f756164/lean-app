@@ -76,7 +76,10 @@ function FishboneForm({ initial }: { initial: FishboneData }) {
               <legend className="sr-only">{cat.name}</legend>
 
               <div className="mb-3 flex items-start gap-2">
-                <span className={`mt-1 h-3 w-3 shrink-0 rounded-full ${CATEGORY_COLORS[i].bg}`} />
+                <span
+                  className="mt-1 h-3 w-3 shrink-0 rounded-full"
+                  style={{ backgroundColor: CATEGORY_COLORS[i].line }}
+                />
                 <div>
                   <h3 className="font-semibold leading-tight">{cat.name}</h3>
                   <p className="text-xs text-foreground/60">{cat.prompt}</p>

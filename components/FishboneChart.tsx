@@ -1,14 +1,15 @@
 import type { FishboneData } from "@/lib/lean/fishbone";
 import { LAYOUT, layoutFishbone } from "@/lib/lean/fishboneLayout";
 
-// Full class names are listed so Tailwind can detect them.
+// Plain hex values on purpose: SVG attributes survive the PNG export,
+// while class-based colors can fall back to black.
 export const CATEGORY_COLORS = [
-  { stroke: "stroke-sky-500", fill: "fill-sky-500", bg: "bg-sky-500" },
-  { stroke: "stroke-emerald-500", fill: "fill-emerald-500", bg: "bg-emerald-500" },
-  { stroke: "stroke-amber-500", fill: "fill-amber-500", bg: "bg-amber-500" },
-  { stroke: "stroke-purple-500", fill: "fill-purple-500", bg: "bg-purple-500" },
-  { stroke: "stroke-rose-500", fill: "fill-rose-500", bg: "bg-rose-500" },
-  { stroke: "stroke-teal-500", fill: "fill-teal-500", bg: "bg-teal-500" },
+  { line: "#0284c7", label: "#0369a1" }, // sky
+  { line: "#059669", label: "#047857" }, // emerald
+  { line: "#d97706", label: "#b45309" }, // amber
+  { line: "#9333ea", label: "#7e22ce" }, // purple
+  { line: "#e11d48", label: "#be123c" }, // rose
+  { line: "#0d9488", label: "#0f766e" }, // teal
 ];
 
 export default function FishboneChart({ data }: { data: FishboneData }) {
@@ -66,7 +67,7 @@ export default function FishboneChart({ data }: { data: FishboneData }) {
                 x2={bone.x1}
                 y2={bone.y1}
                 strokeWidth={3}
-                className={color.stroke}
+                stroke={color.line}
               />
               <rect
                 x={bone.x0 - 62}
@@ -74,13 +75,14 @@ export default function FishboneChart({ data }: { data: FishboneData }) {
                 width={124}
                 height={28}
                 rx={6}
-                className={color.fill}
+                fill={color.label}
               />
               <text
                 x={bone.x0}
                 y={bone.labelY + 18}
                 textAnchor="middle"
-                className="fill-white text-[12px] font-semibold"
+                fill="#ffffff"
+                className="text-[12px] font-semibold"
               >
                 {bone.name}
               </text>
@@ -97,7 +99,7 @@ export default function FishboneChart({ data }: { data: FishboneData }) {
                       x2={cause.x}
                       y2={cause.y}
                       strokeWidth={1.5}
-                      className={color.stroke}
+                      stroke={color.line}
                     />
                     <text y={firstLineY} textAnchor="end" className="fill-foreground text-[11px]">
                       {cause.lines.map((line, li) => (
