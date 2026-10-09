@@ -11,6 +11,8 @@ import { clearRecords, deleteRecord, importRecords } from "@/lib/workspace/store
 import { summarizeRecord } from "@/lib/workspace/summary";
 import type { LeanRecord } from "@/types/lean";
 
+import { isDemo } from "@/lib/dashboard/demo";
+
 const MAX_IMPORT_BYTES = 2000000;
 const dateTime = new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "short" });
 const buttonClass =
@@ -126,10 +128,15 @@ export default function WorkspaceView() {
           ) : (
             <ul className="mt-6 divide-y divide-foreground/10 rounded-2xl border border-foreground/10 bg-surface">
               {records.map((r) => (
-                <li key={r.id} className="flex flex-wrap items-center gap-x-4 gap-y-3 p-4">
+                <li key={r.id} className="flex flex-wrap items-center gap-x-4 gap-y-3 p-4 animate-item-in">
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-baseline gap-x-3">
                       <span className="font-medium">{toolName(r.tool)}</span>
+                      {isDemo(r) && (
+                        <span className="rounded-full bg-foreground/10 px-2 py-0.5 text-xs">
+                          Demo
+                        </span>
+                      )}
                       {r.area && <span className="text-sm text-foreground/70">{r.area}</span>}
                       <time dateTime={r.date} className="text-xs text-foreground/50">
                         {dateTime.format(new Date(r.date))}

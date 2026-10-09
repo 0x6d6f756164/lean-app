@@ -6,6 +6,7 @@
   --surface: #ffffff;
   --accent: #0369a1;
   --on-accent: #ffffff;
+  --header-height: 3.5rem;
   color-scheme: light;
 }
 
@@ -58,6 +59,17 @@
     -webkit-appearance: none;
     margin: 0;
   }
+  html {
+    scroll-padding-top: var(--header-height);
+  }
+
+  /* Every button gives a small press feedback */
+  button {
+    transition: transform 120ms ease-out;
+  }
+  button:not(:disabled):active {
+    transform: scale(0.97);
+  }
 }
 
 /* Applied only while exporting, so the PNG never depends on dark mode */
@@ -98,6 +110,9 @@
 
 @theme {
   --animate-fade-up: fade-up 0.5s ease-out both;
+  --animate-fade-in: fade-in 0.3s ease-out both;
+  --animate-item-in: item-in 0.25s ease-out both;
+  --animate-pop: pop 0.25s ease-out both;
 
   @keyframes fade-up {
     from {
@@ -107,6 +122,40 @@
     to {
       opacity: 1;
       transform: none;
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes item-in {
+    from {
+      opacity: 0;
+      transform: translateY(-6px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes pop {
+    0% {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    60% {
+      transform: scale(1.04);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
     }
   }
 }

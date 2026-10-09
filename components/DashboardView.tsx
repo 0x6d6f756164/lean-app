@@ -75,6 +75,24 @@ export default function DashboardView() {
   const { records, ready } = useRecords();
   const [selected, setSelected] = useState("all");
 
+  const [message, setMessage] = useState("");
+
+  const handleLoadDemo = () => {
+    const added = loadDemoRecords();
+    setMessage(added > 0 ? `Loaded ${added} demo records.` : "");
+  };
+
+  const handleRemoveDemo = () => {
+    const own = records.filter((r) => !isDemo(r)).length;
+    const removed = removeDemoRecords();
+    setMessage(
+      `Removed ${removed} demo ${removed === 1 ? "record" : "records"}. ` +
+        (own === 0
+          ? "Nothing else is saved."
+          : `${own} of your own ${own === 1 ? "record remains" : "records remain"}.`),
+    );
+  };
+
   const groups = useMemo(() => groupByArea(records), [records]);
   const activeKey = groups.some((g) => g.key === selected) ? selected : "all";
   const scoped = useMemo(
@@ -122,17 +140,23 @@ export default function DashboardView() {
               </select>
             </label>
             {hasDemo ? (
-              <button type="button" className={buttonClass} onClick={() => removeDemoRecords()}>
+              <button type="button" className={buttonClass} onClick={handleRemoveDemo}>
                 Remove demo data
               </button>
             ) : (
-              <button type="button" className={buttonClass} onClick={() => loadDemoRecords()}>
+              <button type="button" className={buttonClass} onClick={handleLoadDemo}>
                 Load demo data
               </button>
             )}
           </div>
         )}
       </header>
+
+      {message && (
+        <p role="status" className="mt-4 text-sm text-foreground/70">
+          {message}
+        </p>
+      )}
 
       {ready && records.length === 0 && (
         <div className="mt-8 rounded-2xl border border-dashed border-foreground/20 p-10 text-center">
@@ -144,7 +168,7 @@ export default function DashboardView() {
           <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
             <button
               type="button"
-              onClick={() => loadDemoRecords()}
+              onClick={handleLoadDemo}
               className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-on-accent hover:opacity-90"
             >
               Load demo data

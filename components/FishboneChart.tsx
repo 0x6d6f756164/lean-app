@@ -1,8 +1,10 @@
+"use client";
+
+import { useChartColors } from "@/components/charts/useChartColors";
 import type { FishboneData } from "@/lib/lean/fishbone";
 import { LAYOUT, layoutFishbone } from "@/lib/lean/fishboneLayout";
 
-// Plain hex values on purpose: SVG attributes survive the PNG export,
-// while class-based colors can fall back to black.
+// Plain hex values on purpose: SVG attributes survive the PNG export.
 export const CATEGORY_COLORS = [
   { line: "#0284c7", label: "#0369a1" }, // sky
   { line: "#059669", label: "#047857" }, // emerald
@@ -13,6 +15,7 @@ export const CATEGORY_COLORS = [
 ];
 
 export default function FishboneChart({ data }: { data: FishboneData }) {
+  const c = useChartColors();
   const layout = layoutFishbone(data);
   const { head } = layout;
   const lh = LAYOUT.lineHeight;
@@ -33,7 +36,7 @@ export default function FishboneChart({ data }: { data: FishboneData }) {
           y1={layout.spineY}
           y2={layout.spineY}
           strokeWidth={4}
-          className="stroke-foreground/60"
+          stroke={c.inkMuted}
         />
         <rect
           x={head.x}
@@ -41,7 +44,7 @@ export default function FishboneChart({ data }: { data: FishboneData }) {
           width={head.width}
           height={head.height}
           rx={10}
-          className="fill-foreground"
+          fill={c.ink}
         />
         {head.lines.map((line, i) => (
           <text
@@ -49,7 +52,8 @@ export default function FishboneChart({ data }: { data: FishboneData }) {
             x={head.x + head.width / 2}
             y={headCenterY + (i - (head.lines.length - 1) / 2) * LAYOUT.headLineHeight + 5}
             textAnchor="middle"
-            className="fill-background text-[13px] font-semibold"
+            fill={c.headText}
+            className="text-[13px] font-semibold"
           >
             {line}
           </text>
@@ -92,7 +96,7 @@ export default function FishboneChart({ data }: { data: FishboneData }) {
                 const firstLineY = cause.y - ((cause.lines.length - 1) * lh) / 2 + 4;
 
                 return (
-                  <g key={cause.text}>
+                  <g key={cause.text} className="animate-fade-in">
                     <line
                       x1={cause.x - 8}
                       y1={cause.y}
@@ -101,7 +105,7 @@ export default function FishboneChart({ data }: { data: FishboneData }) {
                       strokeWidth={1.5}
                       stroke={color.line}
                     />
-                    <text y={firstLineY} textAnchor="end" className="fill-foreground text-[11px]">
+                    <text y={firstLineY} textAnchor="end" fill={c.ink} className="text-[11px]">
                       {cause.lines.map((line, li) => (
                         <tspan key={li} x={textX} dy={li === 0 ? 0 : lh}>
                           {line}

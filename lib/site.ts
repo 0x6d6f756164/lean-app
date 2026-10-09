@@ -20,7 +20,8 @@ export const SITE = {
   author: { name: "Mouad", url: "https://mouad-eg.vercel.app" },
 
   /** Header links that are not tools. */
-  extraNav: [
+    /** Header links for the user's own data, shown apart from the tools. */
+  workspaceNav: [
     { label: "Workspace", href: "/workspace" },
     { label: "Dashboard", href: "/dashboard" },
   ],

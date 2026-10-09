@@ -54,7 +54,7 @@ function ParetoForm({ initial }: { initial: ParetoState }) {
         <h3 className="mb-2 text-sm font-medium">Categories and counts</h3>
         <div className="space-y-2">
           {items.map((it, i) => (
-            <div key={i} className="flex gap-2">
+            <div key={i} className="flex gap-2 animate-item-in">
               <input
                 value={it.label}
                 placeholder="Category"

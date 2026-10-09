@@ -1,8 +1,15 @@
 "use client";
 
 import { createContext, useContext } from "react";
+import type { ExportTheme } from "@/lib/exportTheme";
 
-const ExportingContext = createContext(false);
+export interface ExportState {
+  exporting: boolean;
+  theme: ExportTheme;
+}
 
-export const ExportingProvider = ExportingContext.Provider;
-export const useIsExporting = () => useContext(ExportingContext);
+const ExportContext = createContext<ExportState>({ exporting: false, theme: "light" });
+
+export const ExportingProvider = ExportContext.Provider;
+export const useExportState = () => useContext(ExportContext);
+export const useIsExporting = () => useContext(ExportContext).exporting;

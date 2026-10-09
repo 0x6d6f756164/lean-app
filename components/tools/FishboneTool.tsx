@@ -88,7 +88,7 @@ function FishboneForm({ initial }: { initial: FishboneData }) {
 
               <ul className="mb-3 space-y-1.5">
                 {causes.map((cause, k) => (
-                  <li key={cause} className="flex items-start justify-between gap-2 text-sm">
+                  <li key={cause} className="flex items-start justify-between gap-2 text-sm animate-item-in">
                     <span>{cause}</span>
                     <button
                       type="button"

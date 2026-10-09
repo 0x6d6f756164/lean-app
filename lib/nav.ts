@@ -1,27 +1,31 @@
 import { SITE } from "./site";
 import { TOOLS, type ToolMeta } from "./tools";
 
-export interface NavItem {
+export interface NavLink {
   label: string;
   href: string;
 }
 
-/** Ready tools first, then the extra links. A link never appears twice. */
-export function buildNavItems(
-  tools: ToolMeta[] = TOOLS,
-  extra: readonly NavItem[] = SITE.extraNav,
-): NavItem[] {
-  const items: NavItem[] = [
-    ...tools.filter((t) => t.ready).map((t) => ({ label: t.name, href: t.href })),
-    ...extra,
-  ];
+export interface Nav {
+  tools: NavLink[];
+  workspace: NavLink[];
+}
 
+/** Tool tabs and workspace links, with no link ever appearing twice. */
+export function buildNav(
+  tools: ToolMeta[] = TOOLS,
+  workspace: readonly NavLink[] = SITE.workspaceNav,
+): Nav {
   const seen = new Set<string>();
-  const unique: NavItem[] = [];
-  for (const item of items) {
-    if (seen.has(item.href)) continue;
-    seen.add(item.href);
-    unique.push(item);
-  }
-  return unique;
+  const unique = (links: NavLink[]) =>
+    links.filter((link) => {
+      if (seen.has(link.href)) return false;
+      seen.add(link.href);
+      return true;
+    });
+
+  return {
+    tools: unique(tools.filter((t) => t.ready).map((t) => ({ label: t.name, href: t.href }))),
+    workspace: unique([...workspace]),
+  };
 }

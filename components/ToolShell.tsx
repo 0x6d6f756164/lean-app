@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useState, type ReactNode } from "react";
+import { useMemo, useRef, useState, type ReactNode } from "react";
+import { ExportingProvider } from "@/components/ExportContext";
 import { useSharedArea } from "@/hooks/useSharedState";
 import { exportFilename, formatDate } from "@/lib/exportFilename";
 import { exportNodeAsPng } from "@/lib/exportImage";
@@ -12,14 +13,10 @@ import {
 } from "@/lib/exportTheme";
 import { normalizeArea } from "@/lib/lean/area";
 import { shareHash } from "@/lib/share/codec";
-import type { ToolId } from "@/types/lean";
-
+import { SITE } from "@/lib/site";
 import { createRecord } from "@/lib/workspace/records";
 import { saveRecord } from "@/lib/workspace/store";
-
-import { SITE } from "@/lib/site";
-
-import { ExportingProvider } from "@/components/ExportContext";
+import type { ToolId } from "@/types/lean";
 
 interface ToolShellProps {
   title: string;
@@ -29,9 +26,12 @@ interface ToolShellProps {
   explainer: ReactNode;
   /** Full-width layout with results above inputs, for wide visuals like diagrams. */
   stacked?: boolean;
-  /** Enables the "Area / line" field and the "Copy link" button for this tool. */
+  /** Enables the "Area / line" field, Save and Copy link for this tool. */
   share?: { tool: ToolId; data: unknown };
 }
+
+const BUTTON =
+  "rounded-lg border border-foreground/20 px-3 py-1.5 text-sm hover:bg-foreground/5";
 
 const nextPaint = () =>
   new Promise<void>((resolve) =>
@@ -51,11 +51,21 @@ export default function ToolShell({
   const [exporting, setExporting] = useState(false);
   const [exportError, setExportError] = useState("");
   const [exportTheme, setExportTheme] = useState<ExportTheme>("light");
-  const [shareMessage, setShareMessage] = useState("");
+  const [message, setMessage] = useState("");
 
   const sharedArea = useSharedArea(share?.tool);
   const [area, setArea] = useState(sharedArea);
   const cleanArea = normalizeArea(area);
+
+  const exportState = useMemo(
+    () => ({ exporting, theme: exportTheme }),
+    [exporting, exportTheme],
+  );
+
+  const flash = (text: string) => {
+    setMessage(text);
+    window.setTimeout(() => setMessage(""), 3000);
+  };
 
   const handleExport = async () => {
     if (!exportRef.current || exporting) return;
@@ -73,11 +83,6 @@ export default function ToolShell({
     } finally {
       setExporting(false);
     }
-  };
-
-  const flash = (message: string) => {
-    setShareMessage(message);
-    window.setTimeout(() => setShareMessage(""), 3000);
   };
 
   const handleShare = async () => {
@@ -99,7 +104,7 @@ export default function ToolShell({
   };
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-10 animate-fade-up">
+    <main className="mx-auto max-w-6xl animate-fade-up px-4 py-10">
       <header className="mb-8">
         <h1 className="text-3xl font-semibold tracking-tight">{title}</h1>
         <p className="mt-2 max-w-2xl text-foreground/70">{description}</p>
@@ -131,7 +136,7 @@ export default function ToolShell({
 
         <section
           className={`rounded-2xl border border-foreground/10 bg-surface p-6 shadow-sm ${
-            stacked ? "order-first" : "lg:sticky lg:top-6"
+            stacked ? "order-first" : "lg:sticky lg:top-[calc(var(--header-height)_+_1.5rem)]"
           }`}
         >
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
@@ -139,26 +144,22 @@ export default function ToolShell({
               Results
             </h2>
             <div className="flex flex-wrap items-center gap-2">
-              <span role="status" className="text-xs text-foreground/60">
-                {shareMessage}
+              <span
+                key={message}
+                role="status"
+                className={`text-xs text-foreground/60 ${message ? "animate-pop" : ""}`}
+              >
+                {message}
               </span>
               {share && (
-                <button
-                  type="button"
-                  onClick={handleSave}
-                  className="rounded-lg border border-foreground/20 px-3 py-1.5 text-sm hover:bg-foreground/5"
-                >
-                  Save
-                </button>
-              )}
-              {share && (
-                <button
-                  type="button"
-                  onClick={handleShare}
-                  className="rounded-lg border border-foreground/20 px-3 py-1.5 text-sm hover:bg-foreground/5"
-                >
-                  Copy link
-                </button>
+                <>
+                  <button type="button" onClick={handleSave} className={BUTTON}>
+                    Save
+                  </button>
+                  <button type="button" onClick={handleShare} className={BUTTON}>
+                    Copy link
+                  </button>
+                </>
               )}
               <div
                 role="group"
@@ -186,7 +187,7 @@ export default function ToolShell({
                 type="button"
                 onClick={handleExport}
                 disabled={exporting}
-                className="rounded-lg border border-foreground/20 px-3 py-1.5 text-sm hover:bg-foreground/5 disabled:opacity-50"
+                className={`${BUTTON} disabled:opacity-50`}
               >
                 {exporting ? "Exporting…" : "Export PNG"}
               </button>
@@ -207,7 +208,7 @@ export default function ToolShell({
                     .join(" · ")}
                 </p>
               )}
-              <ExportingProvider value={exporting}>{results}</ExportingProvider>
+              <ExportingProvider value={exportState}>{results}</ExportingProvider>
             </div>
           </div>
 

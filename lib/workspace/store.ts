@@ -70,4 +70,8 @@ export function importRecords(incoming: LeanRecord[]): number {
 
 export const loadDemoRecords = (): number => importRecords(createDemoRecords());
 
-export const removeDemoRecords = (): boolean => write(withoutDemo(getRecords()));
+export function removeDemoRecords(): number {
+  const before = getRecords();
+  const after = withoutDemo(before);
+  return write(after) ? before.length - after.length : 0;
+}

@@ -52,7 +52,7 @@ function TaktForm({ initial }: { initial: TaktState }) {
         <h3 className="mb-2 text-sm font-medium">Stations (cycle time in seconds)</h3>
         <div className="space-y-2">
           {stations.map((s, i) => (
-            <div key={i} className="flex gap-2">
+            <div key={i} className="flex gap-2 animate-item-in">
               <input
                 value={s.name}
                 onChange={(e) => updateStation(i, { name: e.target.value })}
