@@ -30,10 +30,10 @@ export default function ParetoChart({ rows, total, threshold }: ParetoChartProps
   const linePath = points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x},${p.y}`).join(" ");
 
   return (
-    <div>
+    <div className="overflow-x-auto">
       <svg
         viewBox={`0 0 ${W} ${H}`}
-        className="w-full"
+        className="w-full min-w-[520px]"
         role="img"
         aria-label="Pareto chart: bars show counts per category, the line shows the cumulative percentage"
       >

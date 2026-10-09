@@ -33,6 +33,9 @@ interface ToolShellProps {
 const BUTTON =
   "rounded-lg border border-foreground/20 px-3 py-1.5 text-sm hover:bg-foreground/5";
 
+const PHONE_QUERY = "(max-width: 639px)";
+const PHONE_EXPORT_WIDTH = 800;
+
 const nextPaint = () =>
   new Promise<void>((resolve) =>
     requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
@@ -48,6 +51,7 @@ export default function ToolShell({
   share,
 }: ToolShellProps) {
   const exportRef = useRef<HTMLDivElement>(null);
+  const [exportWidth, setExportWidth] = useState<number | null>(null);
   const [exporting, setExporting] = useState(false);
   const [exportError, setExportError] = useState("");
   const [exportTheme, setExportTheme] = useState<ExportTheme>("light");
@@ -68,13 +72,16 @@ export default function ToolShell({
   };
 
   const handleExport = async () => {
-    if (!exportRef.current || exporting) return;
+    const node = exportRef.current;
+    if (!node || exporting) return;
     setExportError("");
+    // On phones, lay the results out at a fixed width so the image stays readable.
+    setExportWidth(window.matchMedia(PHONE_QUERY).matches ? PHONE_EXPORT_WIDTH : null);
     setExporting(true);
     try {
-      await nextPaint(); // let the export header and theme render before capturing
+      await nextPaint(); // let the export header, theme and width render before capturing
       await exportNodeAsPng(
-        exportRef.current,
+        node,
         exportFilename(title, new Date(), cleanArea),
         EXPORT_BACKGROUND[exportTheme],
       );
@@ -82,6 +89,7 @@ export default function ToolShell({
       setExportError("Export failed. Please try again.");
     } finally {
       setExporting(false);
+      setExportWidth(null);
     }
   };
 
@@ -199,6 +207,7 @@ export default function ToolShell({
           <div className="-m-4">
             <div
               ref={exportRef}
+              style={exportWidth ? { width: exportWidth } : undefined}
               className={exporting ? `${exportThemeClass(exportTheme)} p-8` : "p-4"}
             >
               {exporting && (

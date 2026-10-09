@@ -41,7 +41,7 @@ function TaktForm({ initial }: { initial: TaktState }) {
 
   const inputs = (
     <div className="space-y-5">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <NumberField label="Shift length" unit="h" value={shiftHours} onChange={setShiftHours} step={0.5} />
         <NumberField label="Breaks per shift" unit="min" value={breakMinutes} onChange={setBreakMinutes} />
         <NumberField label="Shifts per day" value={shifts} onChange={setShifts} min={1} />
@@ -70,7 +70,7 @@ function TaktForm({ initial }: { initial: TaktState }) {
               <button
                 type="button"
                 onClick={() => removeStation(i)}
-                className="rounded-lg px-3 text-foreground/60 hover:bg-foreground/10"
+                className="rounded-lg px-3 py-2 text-foreground/60 hover:bg-foreground/10"
                 aria-label={`Remove station ${i + 1}`}
               >
                 ✕

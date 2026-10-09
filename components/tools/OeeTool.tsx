@@ -37,7 +37,7 @@ function OeeForm({ initial }: { initial: OeeState }) {
   }, [plannedTime, breakdownTime, setupTime, idealCycleTime, totalCount, goodCount]);
 
   const inputs = (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <NumberField label="Planned production time" unit="min" value={plannedTime} onChange={setPlannedTime} />
       <NumberField label="Ideal cycle time" unit="s/unit" value={idealCycleTime} onChange={setIdealCycleTime} step={0.5} />
       <NumberField label="Breakdown time" unit="min" value={breakdownTime} onChange={setBreakdownTime} />

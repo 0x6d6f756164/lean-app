@@ -26,67 +26,69 @@ export default function OeeTrendChart({ series }: { series: OeeSeries[] }) {
     maxT === minT ? [minT] : [0, 0.25, 0.5, 0.75, 1].map((f) => minT + (maxT - minT) * f);
 
   return (
-    <svg
-      viewBox={`0 0 ${W} ${H}`}
-      className="w-full"
-      role="img"
-      aria-label="Line chart of OEE over time, one line per area"
-    >
-      {TICKS.map((t) => (
-        <g key={t}>
-          <line x1={M.left} x2={W - M.right} y1={y(t)} y2={y(t)} className="stroke-foreground/10" />
-          <text x={M.left - 6} y={y(t) + 4} textAnchor="end" className="fill-foreground/60 text-[11px]">
-            {Math.round(t * 100)}%
-          </text>
-        </g>
-      ))}
-
-      <line
-        x1={M.left}
-        x2={W - M.right}
-        y1={y(WORLD_CLASS)}
-        y2={y(WORLD_CLASS)}
-        strokeDasharray="5 4"
-        className="stroke-foreground/40"
-      />
-      <text
-        x={W - M.right}
-        y={y(WORLD_CLASS) - 5}
-        textAnchor="end"
-        className="fill-foreground/60 text-[11px]"
+    <div className="overflow-x-auto">
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        className="w-full min-w-[520px]"
+        role="img"
+        aria-label="Line chart of OEE over time, one line per area"
       >
-        85% world class
-      </text>
+        {TICKS.map((t) => (
+          <g key={t}>
+            <line x1={M.left} x2={W - M.right} y1={y(t)} y2={y(t)} className="stroke-foreground/10" />
+            <text x={M.left - 6} y={y(t) + 4} textAnchor="end" className="fill-foreground/60 text-[11px]">
+              {Math.round(t * 100)}%
+            </text>
+          </g>
+        ))}
 
-      {xTicks.map((t) => (
+        <line
+          x1={M.left}
+          x2={W - M.right}
+          y1={y(WORLD_CLASS)}
+          y2={y(WORLD_CLASS)}
+          strokeDasharray="5 4"
+          className="stroke-foreground/40"
+        />
         <text
-          key={t}
-          x={x(t)}
-          y={H - 10}
-          textAnchor="middle"
+          x={W - M.right}
+          y={y(WORLD_CLASS) - 5}
+          textAnchor="end"
           className="fill-foreground/60 text-[11px]"
         >
-          {dayFormat.format(new Date(t))}
+          85% world class
         </text>
-      ))}
 
-      {series.map((s, i) => {
-        const color = SERIES_COLORS[i % SERIES_COLORS.length];
-        const path = s.points
-          .map((p, k) => `${k === 0 ? "M" : "L"}${x(p.time)},${y(p.oee)}`)
-          .join(" ");
+        {xTicks.map((t) => (
+          <text
+            key={t}
+            x={x(t)}
+            y={H - 10}
+            textAnchor="middle"
+            className="fill-foreground/60 text-[11px]"
+          >
+            {dayFormat.format(new Date(t))}
+          </text>
+        ))}
 
-        return (
-          <g key={s.key}>
-            {s.points.length > 1 && <path d={path} fill="none" stroke={color} strokeWidth={2} />}
-            {s.points.map((p, k) => (
-              <circle key={k} cx={x(p.time)} cy={y(p.oee)} r={3.5} fill={color}>
-                <title>{`${s.area}: ${(p.oee * 100).toFixed(1)}% on ${dayFormat.format(new Date(p.time))}`}</title>
-              </circle>
-            ))}
-          </g>
-        );
-      })}
-    </svg>
+        {series.map((s, i) => {
+          const color = SERIES_COLORS[i % SERIES_COLORS.length];
+          const path = s.points
+            .map((p, k) => `${k === 0 ? "M" : "L"}${x(p.time)},${y(p.oee)}`)
+            .join(" ");
+
+          return (
+            <g key={s.key}>
+              {s.points.length > 1 && <path d={path} fill="none" stroke={color} strokeWidth={2} />}
+              {s.points.map((p, k) => (
+                <circle key={k} cx={x(p.time)} cy={y(p.oee)} r={3.5} fill={color}>
+                  <title>{`${s.area}: ${(p.oee * 100).toFixed(1)}% on ${dayFormat.format(new Date(p.time))}`}</title>
+                </circle>
+              ))}
+            </g>
+          );
+        })}
+      </svg>
+    </div>
   );
 }

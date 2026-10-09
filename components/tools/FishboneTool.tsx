@@ -93,7 +93,7 @@ function FishboneForm({ initial }: { initial: FishboneData }) {
                     <button
                       type="button"
                       onClick={() => setData((prev) => removeCause(prev, cat.id, k))}
-                      className="shrink-0 rounded px-1.5 text-foreground/60 hover:bg-foreground/10"
+                      className="shrink-0 rounded px-2 py-1.5 text-foreground/60 hover:bg-foreground/10"
                       aria-label={`Remove cause: ${cause}`}
                     >
                       ✕

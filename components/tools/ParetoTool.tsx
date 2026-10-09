@@ -73,7 +73,7 @@ function ParetoForm({ initial }: { initial: ParetoState }) {
               <button
                 type="button"
                 onClick={() => removeItem(i)}
-                className="rounded-lg px-3 text-foreground/60 hover:bg-foreground/10"
+                className="rounded-lg px-3 py-2 text-foreground/60 hover:bg-foreground/10"
                 aria-label={`Remove category ${i + 1}`}
               >
                 ✕
