@@ -3,6 +3,7 @@ import SiteHeader from "@/components/SiteHeader";
 import { SITE } from "@/lib/site";
 import "./globals.css";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
+import { Analytics } from "@vercel/analytics/next"
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SiteHeader />
         {children}
         <ServiceWorkerRegister />
+        <Analytics />
       </body>
     </html>
   );
