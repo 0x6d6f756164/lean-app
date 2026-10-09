@@ -63,7 +63,7 @@ function FishboneForm({ initial }: { initial: FishboneData }) {
         />
       </label>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {CATEGORIES.map((cat, i) => {
           const causes = data.causes[cat.id];
           const full = causes.length >= MAX_CAUSES;
@@ -71,7 +71,7 @@ function FishboneForm({ initial }: { initial: FishboneData }) {
           return (
             <fieldset
               key={cat.id}
-              className="rounded-xl border border-foreground/15 bg-foreground/[0.03] p-4"
+              className="min-w-0 rounded-xl border border-foreground/15 bg-foreground/[0.03] p-4"
             >
               <legend className="sr-only">{cat.name}</legend>
 

@@ -45,7 +45,7 @@ function FiveSForm({ initial }: { initial: FiveSState }) {
     {PILLARS.map((pillar, pi) => (
       <fieldset
         key={pillar.id}
-        className="rounded-xl border border-foreground/15 bg-foreground/[0.03] p-4"
+        className="min-w-0 rounded-xl border border-foreground/15 bg-foreground/[0.03] p-4"
       >
         <legend className="sr-only">{pillar.name}</legend>
 

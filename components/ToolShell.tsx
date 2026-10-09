@@ -118,8 +118,12 @@ export default function ToolShell({
         <p className="mt-2 max-w-2xl text-foreground/70">{description}</p>
       </header>
 
-      <div className={stacked ? "grid gap-6" : "grid items-start gap-6 lg:grid-cols-2"}>
-        <section className="rounded-2xl border border-foreground/10 bg-surface p-6 shadow-sm">
+      <div
+        className={
+          stacked ? "grid grid-cols-1 gap-6" : "grid grid-cols-1 items-start gap-6 lg:grid-cols-2"
+        }
+      >
+        <section className="min-w-0 rounded-2xl border border-foreground/10 bg-surface p-6 shadow-sm">
           <h2 className="mb-4 text-sm font-medium uppercase tracking-wide text-foreground/60">
             Inputs
           </h2>
@@ -143,7 +147,7 @@ export default function ToolShell({
         </section>
 
         <section
-          className={`rounded-2xl border border-foreground/10 bg-surface p-6 shadow-sm ${
+          className={`min-w-0 rounded-2xl border border-foreground/10 bg-surface p-6 shadow-sm ${
             stacked ? "order-first" : "lg:sticky lg:top-[calc(var(--header-height)_+_1.5rem)]"
           }`}
         >

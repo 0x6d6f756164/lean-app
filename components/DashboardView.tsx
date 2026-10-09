@@ -54,7 +54,7 @@ function Panel({
 }) {
   return (
     <section
-      className={`rounded-2xl border border-foreground/10 bg-surface p-6 shadow-sm ${className}`}
+      className={`min-w-0 rounded-2xl border border-foreground/10 bg-surface p-6 shadow-sm ${className}`}
     >
       <h2 className="font-semibold">{title}</h2>
       {subtitle && <p className="mt-1 text-sm text-foreground/60">{subtitle}</p>}
@@ -205,7 +205,7 @@ export default function DashboardView() {
             </Kpi>
           </section>
 
-          <div className="mt-6 grid gap-6 lg:grid-cols-2">
+          <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
             <Panel
               title="OEE over time"
               subtitle="Every saved OEE reading, one line per area."
